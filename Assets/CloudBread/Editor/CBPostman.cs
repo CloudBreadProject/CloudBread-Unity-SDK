@@ -20,6 +20,8 @@ namespace CloudBread
                 _instance.Close();
             }
         }
+
+        const string _serchCancelStyle = "SearchCancelButton";
         const string _serchStyle = "SearchTextField";
         const string _boxStyle = "GroupBox";//"MeTransitionBlock";
         const string _selectStyle = "WarningOverlay";
@@ -55,6 +57,7 @@ namespace CloudBread
 
         const float _leftBodySize = 0.35f;
         Postman.Request _selectedRequest = null;
+        string _selectRequestName = null;
         Vector2 _leftBodyScrollPos = Vector2.zero;
         string _serchText = "";
         void DrawBody()
@@ -75,20 +78,39 @@ namespace CloudBread
             {
                 if (null != _postman)
                 {
-                    _serchText = GUILayout.TextArea(_serchText, _serchStyle);
+                    GUILayout.BeginHorizontal();
+                    {
+                        _serchText = GUILayout.TextArea(_serchText, _serchStyle, GUILayout.Width(position.width * _leftBodySize - 10));
+
+                        if (GUILayout.Button("", _serchCancelStyle))
+                        {
+                            _serchText = string.Empty;
+                        }
+                    }
+                    GUILayout.EndHorizontal();
                     _leftBodyScrollPos = GUILayout.BeginScrollView(_leftBodyScrollPos);
                     {
                         foreach (var element in _postman.requests)
                         {
                             if (element.name.ToLower().Contains(_serchText.ToLower()))
                             {
-                                if (null != _selectedRequest && element.name.Equals(_selectedRequest.name))
+                                string title = string.Format("[{0}] {1}", element.method, element.name);
+                                if (null != _selectedRequest && element.Equals(_selectedRequest))
                                 {
-                                    GUILayout.Box(element.name, _selectStyle);
+                                    GUILayout.Box(title, _selectStyle);
                                 }
-                                else if (GUILayout.Button(element.name))
+                                else if (GUILayout.Button(title))
                                 {
                                     _selectedRequest = element;
+                                    _selectRequestName = _selectedRequest.name.Replace(" ", "");
+                                    _selectRequestName = _selectRequestName.Replace("-", "_");
+                                    int index = element.url.IndexOf("api/");
+                                    if (!CBSetting.serverAddress.EndsWith("/"))
+                                    {
+                                        --index;
+                                    }
+                                    _requestURL = element.url.Substring(index);
+
                                     _requestPostData = element.rawModeData;
                                     _requestHeaders = element.headers;
                                     ResetBodyRight();
@@ -102,6 +124,8 @@ namespace CloudBread
             GUILayout.EndVertical();
         }
 
+        string _requestURL = null;
+        string _requestFullURL { get { return _useMyServer ? CBSetting.serverAddress + _requestURL : _selectedRequest.url; } }
         string _requestPostData = null;
         string _requestHeaders = null;
         string _receiveJson = null;
@@ -121,6 +145,7 @@ namespace CloudBread
 
         string[] _requestMenu = new string[] { "Body", "Headers" };
         int _selectRequestMenuIndex = 0;
+        bool _useMyServer = false;
         private void DrawBodyRight()
         {
             GUILayout.BeginVertical();
@@ -130,18 +155,22 @@ namespace CloudBread
                     GUILayout.BeginHorizontal();
                     {
                         GUILayout.Box(_selectedRequest.method, _boxStyle);
-                        GUILayout.Box(_selectedRequest.url, _boxStyle, GUILayout.Width(position.width * 0.4f));
+                        EditorGUILayout.TextArea(_requestFullURL, _boxStyle, GUILayout.Width(400));
+
+                        _useMyServer = GUILayout.Toggle(_useMyServer, "Use CB.Setting Server");
+
                         if (GUILayout.Button("Send"))
                         {
                             ResetBodyRight();
-                            RequestPostmanTest(_requestPostData, _requestHeaders, _selectedRequest, delegate (Postman.Request request_, string text_)
+                            RequestPostmanTest(_requestFullURL, _requestPostData, _requestHeaders, delegate (string text_)
                             {
                                 try
                                 {
                                     if (!string.IsNullOrEmpty(text_))
                                     {
                                         _receiveJson = text_;
-                                        _receiveStruct = MakeStructFromJson("Receive" + request_.name, "struct", text_);
+                                        //_receiveStruct = MakeStructFromJson("Receive" + _selectedRequest.name, "struct", text_);
+                                        _receiveStruct = GenerateStruct(text_, "struct", "Receive", _selectRequestName);
                                     }
                                 }
                                 catch (System.Exception e_)
@@ -156,7 +185,54 @@ namespace CloudBread
                     GUILayout.BeginVertical();
                     {
                         _selectRequestMenuIndex = GUILayout.SelectionGrid(_selectRequestMenuIndex, _requestMenu, 2);
-                        GUILayout.Box(_requestMenu[_selectRequestMenuIndex], _boxStyle);
+
+                        GUILayout.BeginHorizontal();
+                        {
+                            GUILayout.Box(_requestMenu[_selectRequestMenuIndex], _boxStyle);
+
+                            if (0 == _selectRequestMenuIndex && GUILayout.Button("struct Print", GUILayout.Width(100)))
+                            {
+                                string genStructStr = GenerateStruct(_requestPostData, "struct", "Post", _selectRequestName);
+                                Debug.Log(genStructStr);
+                            }
+
+                            if (0 == _selectRequestMenuIndex && GUILayout.Button("Decrypt Print", GUILayout.Width(100)))
+                            {
+                                string decryptStr = CBAuthentication.AES_decrypt(CBTool.GetElementValueFromJson(CloudBread._aseEncryptDefine, _requestPostData));
+                                Debug.Log(decryptStr);
+                            }
+
+                            if (0 == _selectRequestMenuIndex && GUILayout.Button("Generate Client File", GUILayout.Width(100)))
+                            {
+                                string url = _selectedRequest.url.Substring(_selectedRequest.url.IndexOf("api/"));
+                                string postStruct = GenerateStruct(_requestPostData, "struct", "Post", _selectRequestName);
+                                string receiveStruct = GenerateStruct(_requestPostData, "struct", "Receive", _selectRequestName);
+
+                                // postData가 있는 경우/없는경우.
+                                RequestPostmanTest(_requestFullURL, _requestPostData, _requestHeaders, delegate (string text_)
+                                {
+                                    try
+                                    {
+                                        if (!string.IsNullOrEmpty(text_))
+                                        {
+                                            string body = CBTool.GetClassTextFile("Template.CBClass");
+                                            receiveStruct = GenerateStruct(text_, "struct", "Receive", _selectRequestName);
+
+                                            string fileText = string.Format(body, _selectRequestName, url, postStruct, receiveStruct, null == receiveStruct ? null : string.Format("Post{0} postData_, ", _selectRequestName), null == receiveStruct ? null : string.Format("<Receive{0}[]>", _selectRequestName), null == postStruct ? "null" : "JsonUtility.ToJson(postData_)");
+                                            string fileName = string.Format("/CloudBread/Protocols/CloudBread.{0}.{1}.cs", _selectedRequest.method, _selectRequestName);
+                                            AssetDatabase.Refresh();
+                                            CBTool.SaveTextFileInProject(fileName, fileText);
+                                        }
+                                    }
+                                    catch (System.Exception e_)
+                                    {
+                                        Debug.Log(e_);
+                                    }
+                                });
+                            }
+                        }
+                        GUILayout.EndHorizontal();
+
                         _classBodyScroll_rquestDataPos = GUILayout.BeginScrollView(_classBodyScroll_rquestDataPos, GUILayout.Height(100));
                         {
                             if (0 == _selectRequestMenuIndex)
@@ -175,6 +251,7 @@ namespace CloudBread
 
                 if(!string.IsNullOrEmpty(_receiveJson))
                 {
+                    /*
                     GUILayout.BeginHorizontal();
                     {
                         GUILayout.Box("Receive Json", _boxStyle);
@@ -187,17 +264,18 @@ namespace CloudBread
                         }
                     }
                     GUILayout.EndHorizontal();
-
+                    */
                     _classBodyScroll_receiveJsonPos = GUILayout.BeginScrollView(_classBodyScroll_receiveJsonPos, GUILayout.Height(position.height * 0.2f));
                     {
                         //EditorGUILayout.SelectableLabel(_receiveJson);
-                        GUILayout.TextArea(_receiveJson);
+                        EditorGUILayout.TextArea(_receiveJson);
                     }
                     GUILayout.EndScrollView();
                 }
 
                 if (!string.IsNullOrEmpty(_receiveStruct))
                 {
+                    /*
                     GUILayout.BeginHorizontal();
                     {
                         GUILayout.Box("Receive Struct form Json", _boxStyle);
@@ -210,10 +288,10 @@ namespace CloudBread
                         }
                     }
                     GUILayout.EndHorizontal();
-
+                    */
                     _classBodyScroll_receiveStructPos = GUILayout.BeginScrollView(_classBodyScroll_receiveStructPos);
                     {
-                        GUILayout.TextField(_receiveStruct);
+                        EditorGUILayout.TextArea(_receiveStruct);
                     }
                     GUILayout.EndScrollView();
                 }
@@ -221,56 +299,131 @@ namespace CloudBread
             GUILayout.EndVertical();
         }
 
-        private string MakeStructFromJson(string structName_, string structType_, string jsonText_)
+        private string GenerateStruct(string postData_, string structType_, string header_, string name_)
         {
+            if (postData_.Contains(CloudBread._aseEncryptDefine))
+            {
+                string token = CBAuthentication.AES_decrypt(CBTool.GetElementValueFromJson(CloudBread._aseEncryptDefine, postData_));
+                return MakeStructFromJson(header_ + name_, "struct", token);
+            }
+            else
+            {
+                return MakeStructFromJson(header_ + name_, structType_, postData_);
+            }
+        }
+
+        /// <summary>
+        /// json에 있는 element를 string변수로 갖는 클래스나 구조체형태의 텍스트 생성.
+        /// </summary>
+        /// <param name="structName_">클래스/구조체 이름.</param>
+        /// <param name="structType_">class or struct.</param>
+        /// <param name="jsonText_">json Text.</param>
+        /// <returns></returns>
+        static string MakeStructFromJson(string structName_, string structType_, string jsonText_)
+        {
+            structName_ = structName_.Replace(" ", string.Empty);
+            if (structName_.Contains("-"))
+            {
+                structName_ = structName_.Replace("-", "_");
+            }
+
             string[] element = ExtractElementFromJson(jsonText_);
+            if(null == element)
+            {
+                return null;
+            }
+
             string variable = "";
 
             for (int i = 0; i < element.Length; ++i)
             {
-                variable += string.Format("        [SerializeField]\n        public string {0};\n", element[i]);
+                variable += string.Format("            [SerializeField]\n            public string {0};\n", element[i]);
             }
-
-            string body = CBTool.GetClassTextFile();
-
+            string body = CBTool.GetClassTextFile("Template.Class");
             return string.Format(body, structType_, structName_, variable);
         }
 
-        string[] ExtractElementFromJson(string json_)
+        /// <summary>
+        /// json으로부터 element 추출.
+        /// </summary>
+        /// <param name="jsonText_">json text.</param>
+        /// <returns></returns>
+        static string[] ExtractElementFromJson(string jsonText_)
         {
-            string text = json_;
+            string text = jsonText_;
 
-            // 배열로 들어온거면 배열 처리 뺌. 동일한 형식으로[{}, {}] 들어온다고 가정하고, 처음{}형식의 요소들만 추출.
-            if (json_.StartsWith("["))
+            // 배열로 들어온거면 배열 처리 뺌. 동일한 형식으로[{a}, {a}] 들어온다고 가정하고, 처음{}형식의 요소들만 추출.
+            if (jsonText_.StartsWith("["))
             {
-                text = text.Remove(json_.Length - 1).Remove(0, 1);
+                text = text.Remove(jsonText_.Length - 1).Remove(0, 1);
             }
 
-            // 처음 들어온 {} 안의 내용만 추출.
+            // 처음 들어온 {} 안의 내용만 추출. 없으면 항목 없음.
+            if (!text.Contains("{"))
+            {
+                return null;
+            }
             int startIndex = text.IndexOf('{') + 1;
             int endIndex = text.IndexOf('}', startIndex);
             text = text.Substring(startIndex, endIndex - startIndex);
-            string[] list = text.Split(',');
 
-            for(int i = 0; i < list.Length; ++i)
+            // postman에 있을 주석 제거.
+            if (text.Contains("//"))
             {
-                startIndex = list[i].IndexOf('"') + 1;
-                endIndex = list[i].IndexOf('"', startIndex);
-                list[i] = list[i].Substring(startIndex, endIndex - startIndex);
+                using (var reader = new System.IO.StringReader(text))
+                {
+                    //text = "";
+                    string newText = "";
+                    while (true)
+                    {
+                        string strLine = reader.ReadLine();
+                        if (null == strLine)
+                        {
+                            break;
+                        }
+                        if (strLine.Contains("//"))
+                        {
+                            startIndex = strLine.IndexOf("//");
+                            strLine = strLine.Remove(startIndex);
+                        }
+                        newText += strLine;
+                    }
+                    text = newText;
+                }
+            }
+
+            // element단위로 이름만 추출.
+            string[] list = text.Split(',');
+            try
+            {
+                for (int i = 0; i < list.Length; ++i)
+                {
+                    startIndex = list[i].IndexOf('"') + 1;
+                    endIndex = list[i].IndexOf('"', startIndex);
+                    list[i] = list[i].Substring(startIndex, endIndex - startIndex);
+                }
+            }
+            catch
+            {
+                Debug.Log(string.Format("Error.{0}/{1}", startIndex, endIndex));
+                foreach (var element in list)
+                {
+                    Debug.Log(element);
+                }
             }
 
             return list;
         }
 
-        void RequestPostmanTest(string postdata_, string headers_, Postman.Request request_, System.Action<Postman.Request, string> callback_)
+        void RequestPostmanTest(string url_, string postdata_, string headers_, System.Action<string> callback_)
         {
             try
             {
-                DirectWWW(new WWW(request_.url, System.Text.Encoding.UTF8.GetBytes(postdata_), GenerateHeader(headers_)), request_, callback_);
+                DirectWWW(new WWW(url_, System.Text.Encoding.UTF8.GetBytes(postdata_), GenerateHeader(headers_)), callback_);
             }
             catch (System.Exception e_)
             {
-                Debug.LogError(string.Format("[{0}], {1}", request_.name, e_));
+                Debug.LogError(string.Format("[{0}], {1}", url_, e_));
             }
         }
 
@@ -292,7 +445,13 @@ namespace CloudBread
             return head;
         }
 
-        void DirectWWW(WWW www, Postman.Request request_, System.Action<Postman.Request, string> callback_)
+        /// <summary>
+        /// IEnumerator가 아닌 에디터를 위한 WWW 동기코드.
+        /// </summary>
+        /// <param name="www">WWW.</param>
+        /// <param name="request_">요청된 포스트맨의 정보.</param>
+        /// <param name="callback_"></param>
+        static void DirectWWW(WWW www, System.Action<string> callback_)
         {
             while (!www.isDone) { }
 
@@ -303,28 +462,23 @@ namespace CloudBread
             else if (null != callback_)
             {
                 string text = System.Text.Encoding.UTF8.GetString(www.bytes);
-                if (request_.name.StartsWith("Encrypt"))
-                {
-                    int endIndex = text.LastIndexOf('"');
-                    int startIndex = text.LastIndexOf('"', endIndex - 1);
-                    string token = text.Substring(startIndex + 1, endIndex - startIndex - 1);
 
+                // ISSUE - 무조건 token이 encrypy되어 날라오는건지. 확인해야함.
+                if (text.Contains(CloudBread._aseEncryptDefine))
+                {
+                    string token = CBTool.GetElementValueFromJson(CloudBread._aseEncryptDefine, text);
                     try
                     {
-                        string result = CBAuthentication.AES_decrypt(token);
-                        callback_(request_, result);
+                        text = CBAuthentication.AES_decrypt(token);
                     }
                     catch
                     {
                         Debug.Log(token);
-                        Debug.LogWarning(string.Format("[{0}] - {1}", request_.name, text));
+                        Debug.LogWarning(string.Format("{0} - {1}", www.url, text));
                         throw;
                     }
                 }
-                else
-                {
-                    callback_(request_, text);
-                }
+                callback_(text);
             }
             www.Dispose();
         }

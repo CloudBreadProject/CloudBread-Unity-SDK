@@ -1,11 +1,5 @@
-﻿using UnityEngine;
-using System;
-
-
-namespace CloudBread
-{{
-    [Serializable]
-    public {0} {1}
-    {{
-{2}    }}
-}}
+﻿
+        [Serializable]
+        public {0} {1}
+        {{
+{2}        }}

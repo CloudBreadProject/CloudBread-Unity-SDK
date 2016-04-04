@@ -1,0 +1,18 @@
+﻿using UnityEngine;
+using System;
+
+
+namespace CloudBread
+{{
+    public partial class CloudBread
+    {{
+        const string _url{0} = "{1}";
+        {2}
+		{3}
+
+        static public void Request{0}({4}System.Action{5} callback_, System.Action<string> errorCallback_ = null)
+        {{
+            Request(MakeFullUrl(_url{0}), {6}, callback_, errorCallback_);
+        }}
+    }}
+}}
