@@ -11,9 +11,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8b743705ff79c948b605af7df2f267f, type: 3}
   m_Name: CB.Setting
   m_EditorClassIdentifier: 
-  _serverAddress: https://cb2-crypt-demo.azurewebsites.net/
-  _apiVersion: 2.0.0
+  _serverAddress: 68747470733a2f2f6362322d63727970742d64656d6f2e617a75726577656273697465732e6e65742f
+  _apiVersion: 322e302e30
   _authToken: 
-  _aseEnCyptUse: 1
-  _aesKey: 1234567890123456
-  _aesIV: 1234567890123456
+  _useEncrypt: 1
+  _aesKey: 31323334353637383930313233343536
+  _aesIV: 31323334353637383930313233343536

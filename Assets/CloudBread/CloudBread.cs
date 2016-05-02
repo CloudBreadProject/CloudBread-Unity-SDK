@@ -112,7 +112,7 @@ namespace CloudBread
                     if (null != callback_)
                     {
                         string receiveText = www.text;
-                        if (CBSetting.aseEnCyptUse && receiveText.Contains(_aseEncryptDefine))
+                        if (CBSetting.useEncrypt && receiveText.Contains(_aseEncryptDefine))
                         {
                             receiveText = CBAuthentication.AES_decrypt(CBTool.GetElementValueFromJson(_aseEncryptDefine, receiveText));
                         }
@@ -172,7 +172,7 @@ namespace CloudBread
             WWW www = null;
             if (null != postData_)
             {
-                if (CBSetting.aseEnCyptUse)
+                if (CBSetting.useEncrypt)
                 {
                     postData_ = string.Format(@"{{""{0}"": ""{1}""}}", _aseEncryptDefine, CBAuthentication.AES_encrypt(postData_));
                 }

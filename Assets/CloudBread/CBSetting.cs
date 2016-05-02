@@ -15,8 +15,8 @@ namespace CloudBread
         public string _authToken = null;
         static public string authToken { get { return instance._authToken; } }
 
-        public bool _aseEnCyptUse = false;
-        static public bool aseEnCyptUse { get { return instance._aseEnCyptUse; } }
+        public bool _useEncrypt = false;
+        static public bool useEncrypt { get { return instance._useEncrypt; } }
         public string _aesKey = null;
         static public string aesKey { get { return instance._aesKey; } }
         public string _aesIV = null;

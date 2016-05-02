@@ -8,18 +8,18 @@ namespace CloudBread
     [InitializeOnLoad]
     public class CBPreference
     {
-        static CBPreference()
-        {
-            Debug.Log("Welcome. CloudBread.");
-        }
+        //static CBPreference()
+        //{
+        //    Debug.Log("Welcome. CloudBread.");
+        //}
 
         [PreferenceItem("CloudBread")]
         static void OnGUI()
         {
             GUILayout.Box("CloudBread");
-            if(GUILayout.Button("test"))
+            if(GUILayout.Button("Test"))
             {
-                Debug.Log("Hello world.");
+                Debug.Log("Hello CloudBread.");
             }
         }
     }

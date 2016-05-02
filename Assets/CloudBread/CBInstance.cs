@@ -31,6 +31,7 @@ namespace CloudBread
                     {
                         go = new GameObject("CloudBread");
                     }
+                    DontDestroyOnLoad(go);
                     _instance = go.AddComponent<T>();
                     (_instance as CBInstance<T>).OnInitialize();
                 }

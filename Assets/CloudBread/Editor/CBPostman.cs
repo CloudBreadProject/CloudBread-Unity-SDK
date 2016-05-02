@@ -202,7 +202,7 @@ namespace CloudBread
                                 Debug.Log(decryptStr);
                             }
 
-                            if (0 == _selectRequestMenuIndex && GUILayout.Button("Generate Client File", GUILayout.Width(100)))
+                            if (0 == _selectRequestMenuIndex && GUILayout.Button("Generate Protocol", GUILayout.Width(150)))
                             {
                                 string url = _selectedRequest.url.Substring(_selectedRequest.url.IndexOf("api/"));
                                 string postStruct = GenerateStruct(_requestPostData, "struct", "Post", _selectRequestName);
@@ -215,13 +215,14 @@ namespace CloudBread
                                     {
                                         if (!string.IsNullOrEmpty(text_))
                                         {
-                                            string body = CBTool.GetClassTextFile("Template.CBClass");
+                                            string body = CBToolEditor.GetClassTextFile("Template.CBClass");
                                             receiveStruct = GenerateStruct(text_, "struct", "Receive", _selectRequestName);
 
                                             string fileText = string.Format(body, _selectRequestName, url, postStruct, receiveStruct, null == receiveStruct ? null : string.Format("Post{0} postData_, ", _selectRequestName), null == receiveStruct ? null : string.Format("<Receive{0}[]>", _selectRequestName), null == postStruct ? "null" : "JsonUtility.ToJson(postData_)");
                                             string fileName = string.Format("/CloudBread/Protocols/CloudBread.{0}.{1}.cs", _selectedRequest.method, _selectRequestName);
+
+                                            CBToolEditor.SaveTextFileInProject(fileName, fileText);
                                             AssetDatabase.Refresh();
-                                            CBTool.SaveTextFileInProject(fileName, fileText);
                                         }
                                     }
                                     catch (System.Exception e_)
@@ -237,11 +238,11 @@ namespace CloudBread
                         {
                             if (0 == _selectRequestMenuIndex)
                             {
-                                _requestPostData = GUILayout.TextArea(_requestPostData);
+                                _requestPostData = EditorGUILayout.TextArea(_requestPostData);
                             }
                             else
                             {
-                                _requestHeaders = GUILayout.TextArea(_requestHeaders);
+                                _requestHeaders = EditorGUILayout.TextArea(_requestHeaders);
                             }
                         }
                         GUILayout.EndScrollView();
@@ -251,23 +252,8 @@ namespace CloudBread
 
                 if(!string.IsNullOrEmpty(_receiveJson))
                 {
-                    /*
-                    GUILayout.BeginHorizontal();
-                    {
-                        GUILayout.Box("Receive Json", _boxStyle);
-                        if (GUILayout.Button("Copy to Clipboard"))
-                        {
-                            TextEditor te = new TextEditor();
-                            te.text = _receiveJson;
-                            te.OnFocus();
-                            te.Copy();
-                        }
-                    }
-                    GUILayout.EndHorizontal();
-                    */
                     _classBodyScroll_receiveJsonPos = GUILayout.BeginScrollView(_classBodyScroll_receiveJsonPos, GUILayout.Height(position.height * 0.2f));
                     {
-                        //EditorGUILayout.SelectableLabel(_receiveJson);
                         EditorGUILayout.TextArea(_receiveJson);
                     }
                     GUILayout.EndScrollView();
@@ -275,20 +261,6 @@ namespace CloudBread
 
                 if (!string.IsNullOrEmpty(_receiveStruct))
                 {
-                    /*
-                    GUILayout.BeginHorizontal();
-                    {
-                        GUILayout.Box("Receive Struct form Json", _boxStyle);
-                        if (GUILayout.Button("Copy to Clipboard"))
-                        {
-                            TextEditor te = new TextEditor();
-                            te.text = _receiveStruct;
-                            te.OnFocus();
-                            te.Copy();
-                        }
-                    }
-                    GUILayout.EndHorizontal();
-                    */
                     _classBodyScroll_receiveStructPos = GUILayout.BeginScrollView(_classBodyScroll_receiveStructPos);
                     {
                         EditorGUILayout.TextArea(_receiveStruct);
@@ -339,7 +311,7 @@ namespace CloudBread
             {
                 variable += string.Format("            [SerializeField]\n            public string {0};\n", element[i]);
             }
-            string body = CBTool.GetClassTextFile("Template.Class");
+            string body = CBToolEditor.GetClassTextFile("Template.Class");
             return string.Format(body, structType_, structName_, variable);
         }
 
@@ -497,7 +469,7 @@ namespace CloudBread
                     string fileFullpath = EditorUtility.OpenFilePanel("CloudBread", "", "");
                     if (!string.IsNullOrEmpty(fileFullpath))
                     {
-                        string json = CBTool.ReadFile(fileFullpath);
+                        string json = CBToolEditor.ReadFile(fileFullpath);
                         try
                         {
                             Postman postman = JsonUtility.FromJson<Postman>(json);
