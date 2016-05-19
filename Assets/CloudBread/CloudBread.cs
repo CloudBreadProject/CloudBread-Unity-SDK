@@ -63,6 +63,10 @@ namespace CloudBread
         {
             instance.AddRequest(instance.WWWRequest(path_, postData_, callback_, errorCallback_));
         }
+        static void Request<T>(string path_, string postData_, System.Action<T> callback_, System.Action<string> errorCallback_ = null)
+        {
+            instance.AddRequest(instance.WWWRequest<T>(path_, postData_, callback_, errorCallback_));
+        }
         static void Request<T>(string path_, string postData_, System.Action<T[]> callback_, System.Action<string> errorCallback_ = null)
         {
             instance.AddRequest(instance.WWWRequest<T>(path_, postData_, callback_, errorCallback_));
@@ -126,13 +130,11 @@ namespace CloudBread
                             //string text = string.Format(_listCover, www.text);
                             //callback_(JsonUtility.FromJson<T>(text));
 
-                            Debug.Log(receiveText);
-
                             // 아니면 어쩌나..
                             // 파싱 후 리스트로..근데 항상 배열로 넘어오나? -> 그렇다함.
                             // 아니었음. 커뮤니케이션 미스. ㅠㅠ.
 
-                            // 단일 객체.
+                            // 단일 객체는 따로 처리. 제너레이터 수정함. 추후에 변경되더라도 단일 객체가 배열로 리턴되도록 남겨 둠.
                             if (receiveText.StartsWith("{"))
                             {
                                 callback_(new T[] { JsonUtility.FromJson<T>(receiveText) });
@@ -147,11 +149,54 @@ namespace CloudBread
                                     // }, 로 split시에 맨뒤에 있는 항목은 }가 없음.
                                     // 그래서 www.text의 맨뒤에서 하나 더 제거한상태로 전체 객체가 뒤에 }가 없게 처리.
                                     //tList[i] = JsonUtility.FromJson<T>(list[i].EndsWith("}") ? list[i] : list[i]+"}");
-                                    Debug.Log(list[i] + "}");
                                     tList[i] = JsonUtility.FromJson<T>(list[i] + "}");
                                 }
                                 callback_(tList);
                             }
+                        }
+                        catch (System.Exception e)
+                        {
+                            string errorMessage = string.Format("{0}\nurl\n{1}\nwww.text\n{2}\n{3}", "ERROR : Json Parse.", www.url, www.text, e);
+                            if (null != errorCallback_)
+                            {
+                                errorCallback_(errorMessage);
+                            }
+                        }
+                    }
+                    www.Dispose();
+                },
+                delegate (string text_)
+                {
+                    if (null != errorCallback_)
+                    {
+                        errorCallback_(text_);
+                    }
+                }
+            );
+
+            while (itor.MoveNext())
+            {
+                yield return null;
+            }
+        }
+
+        // 단일 객체.
+        IEnumerator WWWRequest<T>(string path_, string postData_, System.Action<T> callback_, System.Action<string> errorCallback_ = null)
+        {
+            IEnumerator itor = WWWProcess(path_, postData_,
+                delegate (WWW www)
+                {
+                    if (null != callback_)
+                    {
+                        string receiveText = www.text;
+                        if (CBSetting.useEncrypt && receiveText.Contains(_aseEncryptDefine))
+                        {
+                            receiveText = CBAuthentication.AES_decrypt(CBTool.GetElementValueFromJson(_aseEncryptDefine, receiveText));
+                        }
+                        try
+                        {
+                            // 단일 객체.
+                            callback_(JsonUtility.FromJson<T>(receiveText));
                         }
                         catch (System.Exception e)
                         {

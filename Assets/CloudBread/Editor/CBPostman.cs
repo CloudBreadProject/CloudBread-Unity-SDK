@@ -169,7 +169,6 @@ namespace CloudBread
                                     if (!string.IsNullOrEmpty(text_))
                                     {
                                         _receiveJson = text_;
-                                        //_receiveStruct = MakeStructFromJson("Receive" + _selectedRequest.name, "struct", text_);
                                         _receiveStruct = GenerateStruct(text_, "struct", "Receive", _selectRequestName);
                                     }
                                 }
@@ -218,7 +217,7 @@ namespace CloudBread
                                             string body = CBToolEditor.GetClassTextFile("Template.CBClass");
                                             receiveStruct = GenerateStruct(text_, "struct", "Receive", _selectRequestName);
 
-                                            string fileText = string.Format(body, _selectRequestName, url, postStruct, receiveStruct, null == receiveStruct ? null : string.Format("Post{0} postData_, ", _selectRequestName), null == receiveStruct ? null : string.Format("<Receive{0}[]>", _selectRequestName), null == postStruct ? "null" : "JsonUtility.ToJson(postData_)");
+                                            string fileText = string.Format(body, _selectRequestName, url, postStruct, receiveStruct, string.IsNullOrEmpty(postStruct) ? postStruct : string.Format("Post{0} postData_, ", _selectRequestName), null == receiveStruct ? null : text_.StartsWith("[") ? string.Format("<Receive{0}[]>", _selectRequestName) : string.Format("<Receive{0}>", _selectRequestName), string.IsNullOrEmpty(postStruct) ? "null" : "JsonUtility.ToJson(postData_)");
                                             string fileName = string.Format("/CloudBread/Protocols/CloudBread.{0}.{1}.cs", _selectedRequest.method, _selectRequestName);
 
                                             CBToolEditor.SaveTextFileInProject(fileName, fileText);
@@ -273,6 +272,9 @@ namespace CloudBread
 
         private string GenerateStruct(string postData_, string structType_, string header_, string name_)
         {
+            if (string.IsNullOrEmpty(postData_))
+                return string.Empty;
+
             if (postData_.Contains(CloudBread._aseEncryptDefine))
             {
                 string token = CBAuthentication.AES_decrypt(CBTool.GetElementValueFromJson(CloudBread._aseEncryptDefine, postData_));
@@ -366,13 +368,18 @@ namespace CloudBread
 
             // element단위로 이름만 추출.
             string[] list = text.Split(',');
+            List<string> result = new List<string>();
             try
             {
                 for (int i = 0; i < list.Length; ++i)
                 {
-                    startIndex = list[i].IndexOf('"') + 1;
-                    endIndex = list[i].IndexOf('"', startIndex);
-                    list[i] = list[i].Substring(startIndex, endIndex - startIndex);
+                    list[i] = list[i].Trim();
+                    if (!string.IsNullOrEmpty(list[i]))
+                    {
+                        startIndex = list[i].IndexOf('"') + 1;
+                        endIndex = list[i].IndexOf('"', startIndex);
+                        result.Add(list[i].Substring(startIndex, endIndex - startIndex));
+                    }
                 }
             }
             catch
@@ -384,7 +391,7 @@ namespace CloudBread
                 }
             }
 
-            return list;
+            return result.ToArray();
         }
 
         void RequestPostmanTest(string url_, string postdata_, string headers_, System.Action<string> callback_)
