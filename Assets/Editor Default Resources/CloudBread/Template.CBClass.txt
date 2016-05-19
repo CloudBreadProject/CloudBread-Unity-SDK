@@ -4,15 +4,15 @@ using System;
 
 namespace CloudBread
 {{
-    public partial class CloudBread
+    public partial class {0}
     {{
-        const string _url{0} = "{1}";
+        const string _url = "{1}";
         {2}
 		{3}
 
-        static public void Request{0}({4}System.Action{5} callback_, System.Action<string> errorCallback_ = null)
+        static public void Request({4}, System.Action{5} callback_, System.Action<string> errorCallback_ = null)
         {{
-            Request(MakeFullUrl(_url{0}), {6}, callback_, errorCallback_);
+            CloudBread.Request(CloudBread.MakeFullUrl(_url), {6}, callback_, errorCallback_);
         }}
     }}
 }}

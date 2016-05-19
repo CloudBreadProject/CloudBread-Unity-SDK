@@ -169,7 +169,7 @@ namespace CloudBread
                                     if (!string.IsNullOrEmpty(text_))
                                     {
                                         _receiveJson = text_;
-                                        _receiveStruct = GenerateStruct(text_, "struct", "Receive", _selectRequestName);
+                                        _receiveStruct = GenerateStruct(text_, "Receive");
                                     }
                                 }
                                 catch (System.Exception e_)
@@ -191,7 +191,7 @@ namespace CloudBread
 
                             if (0 == _selectRequestMenuIndex && GUILayout.Button("struct Print", GUILayout.Width(100)))
                             {
-                                string genStructStr = GenerateStruct(_requestPostData, "struct", "Post", _selectRequestName);
+                                string genStructStr = GenerateStruct(_requestPostData, "Post");
                                 Debug.Log(genStructStr);
                             }
 
@@ -204,8 +204,8 @@ namespace CloudBread
                             if (0 == _selectRequestMenuIndex && GUILayout.Button("Generate Protocol", GUILayout.Width(150)))
                             {
                                 string url = _selectedRequest.url.Substring(_selectedRequest.url.IndexOf("api/"));
-                                string postStruct = GenerateStruct(_requestPostData, "struct", "Post", _selectRequestName);
-                                string receiveStruct = GenerateStruct(_requestPostData, "struct", "Receive", _selectRequestName);
+                                string postStruct = GenerateStruct(_requestPostData, "Post");
+                                string receiveStruct = GenerateStruct(_requestPostData, "Receive");
 
                                 // postData가 있는 경우/없는경우.
                                 RequestPostmanTest(_requestFullURL, _requestPostData, _requestHeaders, delegate (string text_)
@@ -215,9 +215,9 @@ namespace CloudBread
                                         if (!string.IsNullOrEmpty(text_))
                                         {
                                             string body = CBToolEditor.GetClassTextFile("Template.CBClass");
-                                            receiveStruct = GenerateStruct(text_, "struct", "Receive", _selectRequestName);
+                                            receiveStruct = GenerateStruct(text_, "Receive");
 
-                                            string fileText = string.Format(body, _selectRequestName, url, postStruct, receiveStruct, string.IsNullOrEmpty(postStruct) ? postStruct : string.Format("Post{0} postData_, ", _selectRequestName), null == receiveStruct ? null : text_.StartsWith("[") ? string.Format("<Receive{0}[]>", _selectRequestName) : string.Format("<Receive{0}>", _selectRequestName), string.IsNullOrEmpty(postStruct) ? "null" : "JsonUtility.ToJson(postData_)");
+                                            string fileText = string.Format(body, _selectRequestName, url, postStruct, receiveStruct, string.IsNullOrEmpty(postStruct) ? postStruct : "Post postData_", null == receiveStruct ? null : text_.StartsWith("[") ? "<Receive[]>" : "<Receive>", string.IsNullOrEmpty(postStruct) ? "null" : "JsonUtility.ToJson(postData_)");
                                             string fileName = string.Format("/CloudBread/Protocols/CloudBread.{0}.{1}.cs", _selectedRequest.method, _selectRequestName);
 
                                             CBToolEditor.SaveTextFileInProject(fileName, fileText);
@@ -270,7 +270,9 @@ namespace CloudBread
             GUILayout.EndVertical();
         }
 
-        private string GenerateStruct(string postData_, string structType_, string header_, string name_)
+        // struct or class.
+        const string _structType = "struct";
+        private string GenerateStruct(string postData_, string header_)
         {
             if (string.IsNullOrEmpty(postData_))
                 return string.Empty;
@@ -278,11 +280,11 @@ namespace CloudBread
             if (postData_.Contains(CloudBread._aseEncryptDefine))
             {
                 string token = CBAuthentication.AES_decrypt(CBTool.GetElementValueFromJson(CloudBread._aseEncryptDefine, postData_));
-                return MakeStructFromJson(header_ + name_, "struct", token);
+                return MakeStructFromJson(header_, _structType, token);
             }
             else
             {
-                return MakeStructFromJson(header_ + name_, structType_, postData_);
+                return MakeStructFromJson(header_, _structType, postData_);
             }
         }
 

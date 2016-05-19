@@ -59,15 +59,15 @@ namespace CloudBread
             }
         }
 
-        static void Request(string path_, string postData_, System.Action callback_, System.Action<string> errorCallback_ = null)
+        public static void Request(string path_, string postData_, System.Action callback_, System.Action<string> errorCallback_ = null)
         {
             instance.AddRequest(instance.WWWRequest(path_, postData_, callback_, errorCallback_));
         }
-        static void Request<T>(string path_, string postData_, System.Action<T> callback_, System.Action<string> errorCallback_ = null)
+        public static void Request<T>(string path_, string postData_, System.Action<T> callback_, System.Action<string> errorCallback_ = null)
         {
             instance.AddRequest(instance.WWWRequest<T>(path_, postData_, callback_, errorCallback_));
         }
-        static void Request<T>(string path_, string postData_, System.Action<T[]> callback_, System.Action<string> errorCallback_ = null)
+        public static void Request<T>(string path_, string postData_, System.Action<T[]> callback_, System.Action<string> errorCallback_ = null)
         {
             instance.AddRequest(instance.WWWRequest<T>(path_, postData_, callback_, errorCallback_));
         }
@@ -268,7 +268,7 @@ namespace CloudBread
             www.Dispose();
         }
 
-        static string MakeFullUrl(string apiPath_)
+        public static string MakeFullUrl(string apiPath_)
         {
             if (CBSetting.serverAddress.EndsWith("/"))
             {
