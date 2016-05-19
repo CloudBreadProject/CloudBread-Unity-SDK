@@ -126,26 +126,39 @@ namespace CloudBread
                             //string text = string.Format(_listCover, www.text);
                             //callback_(JsonUtility.FromJson<T>(text));
 
+                            Debug.Log(receiveText);
+
                             // 아니면 어쩌나..
                             // 파싱 후 리스트로..근데 항상 리스트로 넘어오나? -> 그렇다함.
-                            string text = receiveText.Remove(receiveText.Length - 2).Remove(0, 1);
-                            string[] list = System.Text.RegularExpressions.Regex.Split(text, "},");
-                            T[] tList = new T[list.Length];
-                            for (int i = 0; i < list.Length; ++i)
+                            // 아니었음. 커뮤니케이션 미스. ㅠㅠ.
+
+                            // 단일 객체.
+                            if (receiveText.StartsWith("{"))
                             {
-                                // }, 로 split시에 맨뒤에 있는 항목은 }가 없음.
-                                // 그래서 www.text의 맨뒤에서 하나 더 제거한상태로 전체 객체가 뒤에 }가 없게 처리.
-                                //tList[i] = JsonUtility.FromJson<T>(list[i].EndsWith("}") ? list[i] : list[i]+"}");
-                                tList[i] = JsonUtility.FromJson<T>(list[i] + "}");
+                                callback_(new T[] { JsonUtility.FromJson<T>(receiveText) });
                             }
-                            callback_(tList);
+                            else // 배열.
+                            {
+                                string text = receiveText.Remove(receiveText.Length - 2).Remove(0, 1);
+                                string[] list = System.Text.RegularExpressions.Regex.Split(text, "},");
+                                T[] tList = new T[list.Length];
+                                for (int i = 0; i < list.Length; ++i)
+                                {
+                                    // }, 로 split시에 맨뒤에 있는 항목은 }가 없음.
+                                    // 그래서 www.text의 맨뒤에서 하나 더 제거한상태로 전체 객체가 뒤에 }가 없게 처리.
+                                    //tList[i] = JsonUtility.FromJson<T>(list[i].EndsWith("}") ? list[i] : list[i]+"}");
+                                    Debug.Log(list[i] + "}");
+                                    tList[i] = JsonUtility.FromJson<T>(list[i] + "}");
+                                }
+                                callback_(tList);
+                            }
                         }
                         catch (System.Exception e)
                         {
                             string errorMessage = string.Format("{0}\nurl\n{1}\nwww.text\n{2}\n{3}", "ERROR : Json Parse.", www.url, www.text, e);
+                            //Debug.Log(errorMessage);
                             if (null != errorCallback_)
                             {
-                                Debug.Log(errorMessage);
                                 errorCallback_(errorMessage);
                             }
                         }
