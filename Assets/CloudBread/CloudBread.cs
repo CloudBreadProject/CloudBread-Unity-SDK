@@ -107,6 +107,15 @@ namespace CloudBread
         static public string _aseEncryptDefineHeader { get { return @"{""token"":"; } }
         static public string _aseEncryptDefine { get { return "token"; } }
 
+        string ReceiveDataPostProcess(string text_)
+        {
+            if (CBSetting.useEncrypt || text_.Contains(_aseEncryptDefineHeader))
+            {
+                return CBAuthentication.AES_decrypt(CBTool.GetElementValueFromJson(_aseEncryptDefine, text_));
+            }
+            return text_;
+        }
+
         // json 배열을 감싸는 리스트를 사용할것인가?
         //const string _listCover = @"{{ ""list"" : {0} }}";
         IEnumerator WWWRequest<T>(string path_, string postData_, System.Action<T[]> callback_, System.Action<string> errorCallback_ = null)
@@ -116,11 +125,8 @@ namespace CloudBread
                 {
                     if (null != callback_)
                     {
-                        string receiveText = www.text;
-                        if (CBSetting.useEncrypt || receiveText.Contains(_aseEncryptDefineHeader))
-                        {
-                            receiveText = CBAuthentication.AES_decrypt(CBTool.GetElementValueFromJson(_aseEncryptDefine, receiveText));
-                        }
+                        string receiveText = ReceiveDataPostProcess(www.text);
+
                         try
                         {
                             // #ISSUE
@@ -189,11 +195,8 @@ namespace CloudBread
                 {
                     if (null != callback_)
                     {
-                        string receiveText = www.text;
-                        if (CBSetting.useEncrypt || receiveText.Contains(_aseEncryptDefineHeader))
-                        {
-                            receiveText = CBAuthentication.AES_decrypt(CBTool.GetElementValueFromJson(_aseEncryptDefine, receiveText));
-                        }
+                        string receiveText = ReceiveDataPostProcess(www.text);
+
                         try
                         {
                             // 단일 객체.
