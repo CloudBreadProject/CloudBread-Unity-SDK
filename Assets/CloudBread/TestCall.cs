@@ -13,10 +13,13 @@ namespace CloudBread
         [SerializeField]
         public T _receiveData;
 
-        virtual public void Callback(T item_)
+        public void Callback(T item_)
         {
             _receiveData = item_;
+            OnReceive(item_);
         }
+
+        virtual public void OnReceive(T item_) { }
     }
 
     /// <summary>

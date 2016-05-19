@@ -104,6 +104,7 @@ namespace CloudBread
             }
         }
 
+        static public string _aseEncryptDefineHeader { get { return @"{""token"":"; } }
         static public string _aseEncryptDefine { get { return "token"; } }
 
         // json 배열을 감싸는 리스트를 사용할것인가?
@@ -116,7 +117,7 @@ namespace CloudBread
                     if (null != callback_)
                     {
                         string receiveText = www.text;
-                        if (CBSetting.useEncrypt && receiveText.Contains(_aseEncryptDefine))
+                        if (CBSetting.useEncrypt || receiveText.Contains(_aseEncryptDefineHeader))
                         {
                             receiveText = CBAuthentication.AES_decrypt(CBTool.GetElementValueFromJson(_aseEncryptDefine, receiveText));
                         }
@@ -189,7 +190,7 @@ namespace CloudBread
                     if (null != callback_)
                     {
                         string receiveText = www.text;
-                        if (CBSetting.useEncrypt && receiveText.Contains(_aseEncryptDefine))
+                        if (CBSetting.useEncrypt || receiveText.Contains(_aseEncryptDefineHeader))
                         {
                             receiveText = CBAuthentication.AES_decrypt(CBTool.GetElementValueFromJson(_aseEncryptDefine, receiveText));
                         }
