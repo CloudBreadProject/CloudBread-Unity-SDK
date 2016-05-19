@@ -391,7 +391,12 @@ namespace CloudBread
         {
             try
             {
-                DirectWWW(new WWW(url_, System.Text.Encoding.UTF8.GetBytes(postdata_), GenerateHeader(headers_)), callback_);
+                byte[] post = null;
+                if (!string.IsNullOrEmpty(postdata_))
+                {
+                    post = System.Text.Encoding.UTF8.GetBytes(postdata_);
+                }
+                DirectWWW(new WWW(url_, post, GenerateHeader(headers_)), callback_);
             }
             catch (System.Exception e_)
             {
@@ -406,8 +411,12 @@ namespace CloudBread
 
             foreach (var element in elements)
             {
-                // Accpt로 시작하는건 일단 생략. zip압축
-                if (!element.StartsWith("Accept") && element.Contains(": "))
+                // 주석 제외.
+                if (element.StartsWith("//"))
+                    continue;
+
+                // Encoding 일단 생략. zip압축
+                if (!element.StartsWith("Accept-Encoding") && element.Contains(": "))
                 {
                     string[] var = System.Text.RegularExpressions.Regex.Split(element, ": ");
                     head.Add(var[0], var[1]);
