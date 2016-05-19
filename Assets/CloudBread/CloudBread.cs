@@ -204,10 +204,10 @@ namespace CloudBread
                         }
                         catch (System.Exception e)
                         {
-                            string errorMessage = string.Format("{0}\nurl\n{1}\nwww.text\n{2}\n{3}", "ERROR : Json Parse.", www.url, www.text, e);
                             //Debug.Log(errorMessage);
                             if (null != errorCallback_)
                             {
+                                string errorMessage = string.Format("{0}\nurl\n{1}\nwww.text\n{2}\n{3}", "ERROR : Json Parse.", www.url, www.text, e);
                                 errorCallback_(errorMessage);
                             }
                         }
