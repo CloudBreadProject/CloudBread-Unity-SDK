@@ -12,8 +12,9 @@ namespace CloudBread
         public string _apiVersion = "2.0.0";
         static public string apiVersion { get { return instance._apiVersion; } }
 
+		// change authToken, read-only -> read-write
         public string _authToken = null;
-        static public string authToken { get { return instance._authToken; } }
+		static public string authToken { get { return instance._authToken; } set{ instance._authToken = value; _cbHeader = null;  } }
 
         public bool _useEncrypt = false;
         static public bool useEncrypt { get { return instance._useEncrypt; } }
