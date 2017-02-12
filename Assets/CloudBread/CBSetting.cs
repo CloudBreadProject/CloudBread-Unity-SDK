@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEditor;
 using System.Collections.Generic;
 
 
@@ -24,7 +25,7 @@ namespace CloudBread
         static public string aesIV { get { return instance._aesIV; } }
 
         static CBSetting _instance = null;
-        static CBSetting instance
+        public static CBSetting instance
         {
             get
             {
@@ -35,6 +36,12 @@ namespace CloudBread
                 return _instance;
             }
         }
+
+		[MenuItem("CloudBread/Setting", false, 0)]
+		public static void Settings()
+		{
+			Selection.activeObject = CBSetting.instance;
+		}
 
         static Dictionary<string, string> _cbHeader = null;
         static public Dictionary<string, string> cbHeader
