@@ -6,6 +6,10 @@ namespace CloudBread
 {
 	public class CBAuthEditor : EditorWindow 
 	{
+		private const string LoginSettingsAssetName = "FacebookLoginSettings";
+		private const string LoginSettingsPath = "CloudBread/Resources";
+		private const string LoginSettingsAssetExtension = ".asset";
+
 		static CBAuthEditor _instance = null;
 
 		[MenuItem("CloudBread/CB-Authentication")]
@@ -50,6 +54,9 @@ namespace CloudBread
 					}
 					GUILayout.EndHorizontal ();
 				}
+
+				GUILayout.Label ("CloudBread 로그인 서비스");
+				GUILayout.Label ("");
 			}
 			GUILayout.EndVertical ();
 
