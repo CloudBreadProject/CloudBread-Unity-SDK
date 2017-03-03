@@ -8,7 +8,7 @@ namespace CloudBread
     public class CBPostman : EditorWindow
     {
         static CBPostman _instance = null;
-        [MenuItem("CloudBread/CB-PostMan")]
+        
         public static void InitWindow()
         {
             if (null == _instance)
