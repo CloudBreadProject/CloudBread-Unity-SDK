@@ -7,9 +7,6 @@ namespace CloudBread
 {
     public class CBSetting : ScriptableObject
     {
-//		private const string CloudBreadSettingsAssetName = "FacebookSettings";
-//		private const string CloudBreadSettingsPath = "FacebookSDK/SDK/Resources";
-//		private const string CloudBreadSettingsAssetExtension = ".asset";
 
         public string _serverAddress;
         static public string serverAddress { get { return instance._serverAddress; } }
@@ -43,31 +40,6 @@ namespace CloudBread
                 return _instance;
             }
         }
-
-
-		#if UNITY_EDITOR
-
-		[MenuItem("CloudBread/Setting", false, 0)]
-		public static void Settings()
-		{
-			Selection.activeObject = CBSetting.instance;
-		}
-
-		[MenuItem("CloudBread/Developers Page", false, 1)]
-		public static void OpenWeb()
-		{
-			string url = "https://github.com/CloudBreadProject";
-			Application.OpenURL(url);
-		}
-
-		[MenuItem("CloudBread/SDK Document", false, 2)]
-		public static void OpenDocs()
-		{
-			string url = "https://github.com/CloudBreadProject/CloudBread/wiki/How-to-use-Unity-SDK-kor";
-			Application.OpenURL(url);
-		}
-
-		#endif
 
         static Dictionary<string, string> _cbHeader = null;
         static public Dictionary<string, string> cbHeader
