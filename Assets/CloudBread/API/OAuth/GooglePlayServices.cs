@@ -8,6 +8,10 @@ namespace CloudBread.OAuth
 		public GooglePlayServices ()
 		{
 		}
+		public override void RequestToken(string access_token, Action<AzureZumoToken.Receive> callback, Action<string> errorCallback = null)
+		{
+
+		}
 
 		public void RequestToken(FacebookData.Post postData_, System.Action<FacebookData.Receive[]> callback_, System.Action<string> errorCallback_ = null)
 		{
@@ -17,10 +21,6 @@ namespace CloudBread.OAuth
 			CloudBread.Request(CloudBread.MakeFullUrl(url), JsonUtility.ToJson(postData_), callback_, errorCallback_);
 		}
 
-		public class GooglePlayData
-		{
-
-		}
 
 		public class FacebookData
 		{
