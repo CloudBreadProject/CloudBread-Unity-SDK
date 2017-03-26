@@ -5,27 +5,21 @@ namespace CloudBread.OAuth
 {
 	public class FaceBookServices : BaseOAuth2Services
 	{
-		public FaceBookServices ()
-		{
-		}
-			
-		public void SessionConfirm()
+
+		public void RequestToken(string access_token, System.Action<FacebookData.Receive> callback_, System.Action<string> errorCallback_ = null)
 		{
 
-		}
+			string url = CloudBread.Address + OAuth2Setting.FacebookRedirectAddress;
+			Debug.Log (url);
 
-		public void RequestToken(FacebookData.Post postData_, System.Action<FacebookData.Receive[]> callback_, System.Action<string> errorCallback_ = null)
-		{
-			string url = ".auth/login/facebook";
-			string postData;
 
-			CloudBread.Request(CloudBread.MakeFullUrl(url), JsonUtility.ToJson(postData_), callback_, errorCallback_);
-		}
+			string postData = "{ \"access_token\" : \"" + access_token + "\"}";
+			Debug.Log (postData);
 
-		public void RequestUserData()
-		{
+			CloudBread.Request (url, postData, callback_, errorCallback_);
 
 		}
+
 
 		public class FacebookData
 		{
