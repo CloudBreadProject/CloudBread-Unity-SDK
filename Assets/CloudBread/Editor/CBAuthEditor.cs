@@ -1,14 +1,12 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using CloudBread.OAuth;
 
 namespace CloudBread
 {
 	public class CBAuthEditor : EditorWindow 
 	{
-		private const string LoginSettingsAssetName = "FacebookLoginSettings";
-		private const string LoginSettingsPath = "CloudBread/Resources";
-		private const string LoginSettingsAssetExtension = ".asset";
 
 		private enum MENU_CATEGORIES { GENERAL, FACEBOOK, GOOGLE, KAKAO};
 		private MENU_CATEGORIES _selectedMenu = MENU_CATEGORIES.GENERAL;
@@ -27,51 +25,36 @@ namespace CloudBread
 			}
 		}
 
-		bool _FacebookAuthEnabled = true;
-		bool _GoogleGameAuthEnabled = false;
-
-		bool myBool = true;
-		float myFloat = 0.0f;
-
 		const float _leftBodySize = 0.25f;
+
+		private Texture2D logoTextur;
+
 
 		private void GeneralSetting()
 		{
 			GUILayout.BeginVertical ();
 			{
+				GUILayout.Label ("CloudBread Login Service - OAuth 2.0", CBGUIStyleFactory.GetTitleGUIStyle());
 
-				GUILayout.Label ("CloudBread Login Service - OAuth 2.0", EditorStyles.largeLabel);
+//				GUILayout.Label ("Facebook Settings", EditorStyles.boldLabel);
 
-				//			myString = EditorGUILayout.TextField ("Text Field", myString);
-				GUILayout.Label ("Facebook Settings", EditorStyles.boldLabel);
-
+				GUILayout.Label ("");
 
 				GUILayout.BeginVertical ();
 				{
-					//				GUILayout.Box("CloudBread Login Service - OAuth 2.0", "IN BigTitle");
-					//				GUILayout.Label("");
 
-					GUILayout.Box ("To configure CloudBread Login Service in this Project,\n" +
-						"you can get more information in our Project Sites", "IN Title");
-					GUILayout.Label ("CloudBread 로그인 서비스를 설정하려면, 아래 프로젝트 사이트를 참조하세요.");
+					GUILayout.Box ("Before you configure CloudBread Login Service in this Project,\n" +
+						"go our Project sites and see that documents", CBGUIStyleFactory.GetTitle2GUIStyle());
+					GUILayout.Label ("CloudBread 로그인 서비스를 시작하기 전, 아래 문서를 참조하세요.", CBGUIStyleFactory.GetTitle2GUIStyle());
+						
 
-					if (GUILayout.Button ("OpenSource Project - CloudBread.", GUI.skin.box)) {
+					if (GUILayout.Button ("Get Start with Documents (OpenSource Project - CloudBread.)", CBGUIStyleFactory.GetLinkButtonGUIStyle())) {
 						Application.OpenURL ("https://github.com/CloudBreadProject/");
 					}
-
-					if (GUILayout.Toggle (_FacebookAuthEnabled, "Facebook Authentication")) {
-						GUILayout.Box ("difjdijsojf");
-						GUILayout.BeginHorizontal ();
-						{
-							GUILayout.Label ("Redirection URL : ");
-							GUILayout.TextField ("", GUILayout.ExpandWidth (true));
-
-						}
-						GUILayout.EndHorizontal ();
-					}
-
-					GUILayout.Label ("CloudBread 로그인 서비스");
+						
 					GUILayout.Label ("");
+					GUILayout.Label ("CloudBread 로그인 서비스");
+
 				}
 				GUILayout.EndVertical ();
 			}
@@ -84,38 +67,63 @@ namespace CloudBread
 			EditorGUILayout.BeginVertical ();
 			{
 				
-				_FacebookAuthEnabled = EditorGUILayout.BeginToggleGroup ("Optional Settings", _FacebookAuthEnabled);
+				OAuth.OAuth2Setting.UseFacebook = EditorGUILayout.BeginToggleGroup ("Use Facebook OAuth Services", OAuth.OAuth2Setting.UseFacebook);
 				{
-					myBool = EditorGUILayout.Toggle ("Toggle", myBool);
-					myFloat = EditorGUILayout.Slider ("Slider", myFloat, -3, 3);
+					
 
-
-
-					EditorGUILayout.LabelField ("Facebook oAuth 2.0 Login Service");
+					EditorGUILayout.LabelField ("Facebook oAuth 2.0 Login Service", CBGUIStyleFactory.GetContentGUIStlye());
 
 					EditorGUILayout.BeginHorizontal ();
 					{
-						EditorGUILayout.LabelField ("Redirect Url : ");
-						EditorGUILayout.TextArea ("https://cb2-auth-demo.azurewebsites.net/facebook");
+						EditorGUILayout.LabelField ("CloudBread Url : " , CBGUIStyleFactory.GetContentGUIStlye());
+						EditorGUILayout.TextArea (CBSetting.serverAddress);
 					}
 					EditorGUILayout.EndHorizontal ();
 
-					if (GUILayout.Button ("Generate")) {
-//						CBToolEditor.SaveTextFileInProject ();
+					EditorGUILayout.BeginHorizontal ();
+					{
+						EditorGUILayout.LabelField ("Redirect Url : ", CBGUIStyleFactory.GetContentGUIStlye());
+						EditorGUILayout.TextArea (OAuth.OAuth2Setting.FacebookRedirectAddress);
 					}
+					EditorGUILayout.EndHorizontal ();
+
+					EditorGUILayout.LabelField ("Full Redirection Url : " + CBSetting.serverAddress + OAuth2Setting.FacebookRedirectAddress);
+
+					EditorGUILayout.LabelField ("");
+
 				
+					EditorGUILayout.BeginFadeGroup (0.0f);
+					{
+						GUILayout.Box ("You can get more information about Facebook Login Service here.!", CBGUIStyleFactory.GetContentGUIStlye());
+
+
+						if (GUILayout.Button ("Facebook Developer Pages", CBGUIStyleFactory.GetLinkButtonGUIStyle())) {
+							Application.OpenURL ("https://github.com/CloudBreadProject/");
+						}
+
+							
+					}
+					EditorGUILayout.EndFadeGroup ();
 				}
 				EditorGUILayout.EndToggleGroup ();
+
+
 			}
 			EditorGUILayout.EndVertical ();
 		}
 
 		private void GoogleGameSetting()
 		{
-			_GoogleGameAuthEnabled = EditorGUILayout.BeginToggleGroup ("Optional Settings", _GoogleGameAuthEnabled);
+			OAuth2Setting.UseGooglePlay = EditorGUILayout.BeginToggleGroup ("Use Google Play OAuth Services", OAuth2Setting.UseGooglePlay);
 			{
-
+				GUILayout.Label ("서 비 스 준 비 중 . . .", CBGUIStyleFactory.GetContentGUIStlye());
+				GUILayout.Label ("빠 른 시 간 내 에   업 데 이 트 하 겠 습 니 다 .", CBGUIStyleFactory.GetContentGUIStlye());
 			}
+		}
+
+		private void KaKaoGameSetting()
+		{
+			
 		}
 
 		private void DrawLeftMenu()
@@ -138,18 +146,19 @@ namespace CloudBread
 			GUILayout.EndVertical ();
 		}
 
+
+
 		private void DrawRightBody()
 		{
 			
-			if (_selectedMenu == MENU_CATEGORIES.GENERAL) {
+			if (_selectedMenu == MENU_CATEGORIES.GENERAL)
 				GeneralSetting ();
-			}
-			else if (_selectedMenu == MENU_CATEGORIES.FACEBOOK) {
+			else if (_selectedMenu == MENU_CATEGORIES.FACEBOOK)
 				FaceBookSetting ();
-			}
-			else if (_selectedMenu == MENU_CATEGORIES.GOOGLE) {
+			else if (_selectedMenu == MENU_CATEGORIES.GOOGLE)
 				GoogleGameSetting ();
-			}
+			else if (_selectedMenu == MENU_CATEGORIES.KAKAO)
+				KaKaoGameSetting ();
 
 		}
 
@@ -157,17 +166,68 @@ namespace CloudBread
 		{
 			GUILayout.BeginHorizontal ();
 			{
-				DrawLeftMenu ();
 
-				DrawRightBody ();
+		
 
 			}
 			GUILayout.EndHorizontal ();
 
+			GUILayout.BeginVertical ();
+			{
+				GeneralSetting ();
+
+				FaceBookSetting ();
+
+				GoogleGameSetting ();
+			}
+			GUILayout.EndVertical ();
+
 		}
 
+		class CBGUIStyleFactory{
 
-			
+			public static GUIStyle GetTitleGUIStyle()
+			{
+				GUIStyle style = new GUIStyle(GUI.skin.GetStyle("label"));
+				style.fontSize = 22;
+				style.normal.textColor = Color.black ;
+				style.alignment = TextAnchor.MiddleCenter;
+				style.margin = new RectOffset (5, 5, 15, 5);
+				return style;
+			}
+
+			public static GUIStyle GetTitle2GUIStyle()
+			{
+				GUIStyle style = new GUIStyle(GUI.skin.GetStyle("label"));
+				style.fontSize = 15;
+				style.normal.textColor = Color.black ;
+				style.alignment = TextAnchor.LowerLeft;
+//				style.margin = new RectOffset (5, 5, 5, 5);
+				return style;
+			}
+
+			public static GUIStyle GetContentGUIStlye()
+			{
+				GUIStyle style = new GUIStyle(GUI.skin.GetStyle("label"));
+				style.fontSize = 13;
+				style.normal.textColor = Color.black ;
+				style.alignment = TextAnchor.LowerLeft;
+				style.margin = new RectOffset (5, 5, 5, 10);
+				return style;
+			}
+
+			public static GUIStyle GetLinkButtonGUIStyle()
+			{
+				GUIStyle style = new GUIStyle(GUI.skin.GetStyle("button"));
+				style.fontSize = 13;
+				style.normal.textColor = Color.gray ;
+				style.alignment = TextAnchor.MiddleCenter;
+								style.margin = new RectOffset (2, 2, 5, 10);
+				return style;
+			}
+
+
+		}
 	}
 
 }

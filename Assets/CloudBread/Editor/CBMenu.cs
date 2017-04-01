@@ -34,13 +34,14 @@ namespace CloudBread
 			CBPostman.InitWindow ();
 		}
 
-		/*
+
 		[MenuItem("CloudBread/CB-Authentication")]
 		public static void OpenAuthenticationSettingsWindows()
 		{
 			CBAuthEditor.InitWindow ();
+
 		}
-		*/
+
 
 		#endif
 	}
