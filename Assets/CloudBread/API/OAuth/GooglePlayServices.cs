@@ -15,7 +15,7 @@ namespace CloudBread.OAuth
 
 		public void RequestToken(FacebookData.Post postData_, System.Action<FacebookData.Receive[]> callback_, System.Action<string> errorCallback_ = null)
 		{
-			string url = ".auth/login/facebook";
+			string url = ".auth/login/googleplay";
 			string postData;
 
 			CloudBread.Request(CloudBread.MakeFullUrl(url), JsonUtility.ToJson(postData_), callback_, errorCallback_);
