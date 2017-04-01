@@ -8,9 +8,6 @@ namespace CloudBread
 	public class CBAuthEditor : EditorWindow 
 	{
 
-		private enum MENU_CATEGORIES { GENERAL, FACEBOOK, GOOGLE, KAKAO};
-		private MENU_CATEGORIES _selectedMenu = MENU_CATEGORIES.GENERAL;
-
 		static CBAuthEditor _instance = null;
 
 		public static void InitWindow()
@@ -24,19 +21,12 @@ namespace CloudBread
 				_instance.Close();
 			}
 		}
-
-		const float _leftBodySize = 0.25f;
-
-		private Texture2D logoTextur;
-
-
+			
 		private void GeneralSetting()
 		{
 			GUILayout.BeginVertical ();
 			{
 				GUILayout.Label ("CloudBread Login Service - OAuth 2.0", CBGUIStyleFactory.GetTitleGUIStyle());
-
-//				GUILayout.Label ("Facebook Settings", EditorStyles.boldLabel);
 
 				GUILayout.Label ("");
 
@@ -126,52 +116,8 @@ namespace CloudBread
 			
 		}
 
-		private void DrawLeftMenu()
-		{
-			GUILayout.BeginVertical (GUILayout.Width(position.width * _leftBodySize));
-			{
-				if (GUILayout.Button ("General"))
-					_selectedMenu = MENU_CATEGORIES.GENERAL;
-				
-				if (GUILayout.Button ("Facebook"))
-					_selectedMenu = MENU_CATEGORIES.FACEBOOK;
-
-				if (GUILayout.Button ("Google"))
-					_selectedMenu = MENU_CATEGORIES.GOOGLE;
-				
-				if (GUILayout.Button ("KaKao"))
-					_selectedMenu = MENU_CATEGORIES.KAKAO;	
-
-			}
-			GUILayout.EndVertical ();
-		}
-
-
-
-		private void DrawRightBody()
-		{
-			
-			if (_selectedMenu == MENU_CATEGORIES.GENERAL)
-				GeneralSetting ();
-			else if (_selectedMenu == MENU_CATEGORIES.FACEBOOK)
-				FaceBookSetting ();
-			else if (_selectedMenu == MENU_CATEGORIES.GOOGLE)
-				GoogleGameSetting ();
-			else if (_selectedMenu == MENU_CATEGORIES.KAKAO)
-				KaKaoGameSetting ();
-
-		}
-
 		void OnGUI()
 		{
-			GUILayout.BeginHorizontal ();
-			{
-
-		
-
-			}
-			GUILayout.EndHorizontal ();
-
 			GUILayout.BeginVertical ();
 			{
 				GeneralSetting ();
