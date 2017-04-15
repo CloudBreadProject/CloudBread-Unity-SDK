@@ -14,10 +14,10 @@ oAuth 2.0 Login Service Framework will added (now only Facebook)
 ## How to Install.
 ### 1\. Just Drag Drop in your Project!
 
-**CloudBread-Unity-SDK-master – Asset – CloudBread** 폴더 추가하기 ![Unity CloudBread SDK](Resources/UnitySDK/image001.png)
+**CloudBread-Unity-SDK-master – Asset – CloudBread** 폴더 추가하기 ![Unity CloudBread SDK](https://raw.githubusercontent.com/wiki/CloudBreadProject/CloudBread/Resources/UnitySDK/image001.png)
 
 ### 2\. Done.
-![Unity editor](Resources/UnitySDK/image002.png)
+![Unity editor](https://raw.githubusercontent.com/wiki/CloudBreadProject/CloudBread/Resources/UnitySDK/image002.png)
 If you can see that menu as this photos, that's all!
 
 ## How to use CloudBread API Service
@@ -26,7 +26,7 @@ If you can see that menu as this photos, that's all!
 - CloudBread – CB-PostMan Click
 - [PostMan Collection(2016-03-26버전)](https://raw.githubusercontent.com/wiki/CloudBreadProject/CloudBread/20160326-CloudBread.json.postman_collection) Download
 - Import PostMan File (`.json.postman_collection`)
-[Unity CloudBread Postman Editor](Resources/UnitySDK/image003.png))
+[Unity CloudBread Postman Editor](https://raw.githubusercontent.com/wiki/CloudBreadProject/CloudBread/Resources/UnitySDK/image003.png))
 
 ## 2\. Just select, you want to use.
 
@@ -36,7 +36,7 @@ You can search here and **Generate Client File** button click
 
 **CloudBread – Resources – CB.Settings** Click
 
-![Unity CloudBread settings](Resources/UnitySDK/image004.png)
+![Unity CloudBread settings](https://raw.githubusercontent.com/wiki/CloudBreadProject/CloudBread/Resources/UnitySDK/image004.png)
 
 Here, you can set server address and AES256 Encrypt/Decrypt Keys
 
@@ -62,7 +62,7 @@ namespace CloudBread
 
 And, you can test like this in Unity Inspector.
 
-![inspector](Resources/UnitySDK/Image_Inspector.jpeg)
+![inspector](https://raw.githubusercontent.com/wiki/CloudBreadProject/CloudBread/Resources/UnitySDK/Image_Inspector.jpeg)
 
 ## 5\. Just Call API!
 
@@ -109,3 +109,20 @@ CloudBread.CBCOMUdtMember.Request(
 
 
 ## How to use CloudBread Login Service.
+### 1\. Configure your Oauth Login services
+![Facebook oAuth Setting](https://raw.githubusercontent.com/wiki/CloudBreadProject/CloudBread/Resources/UnitySDK/image005.png)
+- check services you want to uses (Facebook / Google and so on...)
+- fill with Redirect Url
+
+### 2\. Example to use Login services
+you can call service like this.
+```C#
+FaceBookServices oAuthFacebook =  OAuthManager.GetServices (OAuthManager.OAuthServices.facebook) as FaceBookServices;
+oAuthFacebook.RequestToken (accessToken, (BaseOAuth2Services.AzureZumoToken.Receive obj) => {
+  Debug.Log(obj.user.userId);
+});
+
+oAuthFacebook.RequestUser (accessToken, (FaceBookServices.FacebookUserData obj) => {
+  Debug.Log(obj.name);
+});
+```
