@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEditor;
 using System.Collections.Generic;
 
 
@@ -6,6 +7,7 @@ namespace CloudBread
 {
     public class CBSetting : ScriptableObject
     {
+
         public string _serverAddress;
         static public string serverAddress { get { return instance._serverAddress; } }
 
@@ -24,13 +26,16 @@ namespace CloudBread
         static public string aesIV { get { return instance._aesIV; } }
 
         static CBSetting _instance = null;
-        static CBSetting instance
+        public static CBSetting instance
         {
             get
             {
                 if (null == _instance)
                 {
                     _instance = Resources.Load<CBSetting>("CB.Setting");
+
+//					_instance = ScriptableObject.CreateInstance<CBSetting> ();
+					
                 }
                 return _instance;
             }
