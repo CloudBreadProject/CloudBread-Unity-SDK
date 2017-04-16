@@ -40,7 +40,7 @@ You can search here and **Generate Client File** button click
 
 Here, you can set server address and AES256 Encrypt/Decrypt Keys
 
-## 4\. Just function call! (Test Call Class)
+## 4\. Just call! (Test Call Class)
 
 If you use TestCall class like this, you can use easily.
 
