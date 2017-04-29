@@ -26,7 +26,7 @@ namespace CloudBread
 		{
 			GUILayout.BeginVertical ();
 			{
-				GUILayout.Label ("CloudBread Login Service - OAuth 2.0", CBGUIStyleFactory.GetTitleGUIStyle());
+				GUILayout.Label ("CloudBread Login Service - OAuth", CBGUIStyleFactory.GetTitleGUIStyle());
 
 				GUILayout.Label ("");
 
@@ -106,9 +106,41 @@ namespace CloudBread
 		{
 			OAuth2Setting.UseGooglePlay = EditorGUILayout.BeginToggleGroup ("Use Google Play OAuth Services", OAuth2Setting.UseGooglePlay);
 			{
-				GUILayout.Label ("서 비 스 준 비 중 . . .", CBGUIStyleFactory.GetContentGUIStlye());
-				GUILayout.Label ("빠 른 시 간 내 에   업 데 이 트 하 겠 습 니 다 .", CBGUIStyleFactory.GetContentGUIStlye());
+				EditorGUILayout.LabelField ("Google Play Game oAuth 2.0 Login Service", CBGUIStyleFactory.GetContentGUIStlye());
+
+				EditorGUILayout.BeginHorizontal ();
+				{
+					EditorGUILayout.LabelField ("CloudBread Url : " , CBGUIStyleFactory.GetContentGUIStlye());
+					EditorGUILayout.TextArea (CBSetting.serverAddress);
+				}
+				EditorGUILayout.EndHorizontal ();
+
+				EditorGUILayout.BeginHorizontal ();
+				{
+					EditorGUILayout.LabelField ("Redirect Url : ", CBGUIStyleFactory.GetContentGUIStlye());
+					EditorGUILayout.TextArea (OAuth.OAuth2Setting.GoogleRedirectAddress);
+				}
+				EditorGUILayout.EndHorizontal ();
+
+				EditorGUILayout.LabelField ("Full Redirection Url : " + CBSetting.serverAddress + OAuth2Setting.GoogleRedirectAddress);
+
+				EditorGUILayout.LabelField ("");
+
+
+				EditorGUILayout.BeginFadeGroup (0.0f);
+				{
+					GUILayout.Box ("You can get more information about Google Login Service here.!", CBGUIStyleFactory.GetContentGUIStlye());
+
+
+					if (GUILayout.Button ("Facebook Developer Pages", CBGUIStyleFactory.GetLinkButtonGUIStyle())) {
+						Application.OpenURL ("https://github.com/CloudBreadProject/");
+					}
+
+
+				}
+				EditorGUILayout.EndFadeGroup ();
 			}
+			EditorGUILayout.EndToggleGroup ();
 		}
 
 		private void KaKaoGameSetting()

@@ -36,8 +36,9 @@ namespace CloudBread.OAuth
 			get { return instance._useGooglePlay; }
 			set { Instance._useGooglePlay = value; }
 		}
-
-		public string _googleRedirectAddress = ".auth/login/googleplay";
+			
+//		public string _googleRedirectAddress = ".auth/login/googleplay";
+		public string _googleRedirectAddress = ".auth/login/google";
 		static public string GoogleRedirectAddress 
 		{
 			get { return instance._googleRedirectAddress; }
