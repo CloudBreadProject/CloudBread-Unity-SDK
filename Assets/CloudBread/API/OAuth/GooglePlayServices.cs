@@ -5,50 +5,17 @@ namespace CloudBread.OAuth
 {
 	public class GooglePlayServices : BaseOAuth2Services
 	{
-		public GooglePlayServices ()
+		public void RequestToken(string id_token, string access_token, Action<AzureZumoToken.Receive> callback, Action<string> errorCallback = null)
 		{
+			string url = CloudBread.Address + ".auth/login/google";
+//			string url = CloudBread.Address + OAuth2Setting.GoogleRedirectAddress;
+			Debug.Log (url);
+
+			string postData = "{ \"id_token\": \"" + id_token + "\",  \"access_token\" : \"" + access_token + " \"}";
+			Debug.Log (postData);
+
+			CloudBread.Request (url, postData, callback, errorCallback);
 		}
-		public override void RequestToken(string access_token, Action<AzureZumoToken.Receive> callback, Action<string> errorCallback = null)
-		{
-
-		}
-
-		public void RequestToken(FacebookData.Post postData_, System.Action<FacebookData.Receive[]> callback_, System.Action<string> errorCallback_ = null)
-		{
-			string url = ".auth/login/googleplay";
-			string postData;
-
-			CloudBread.Request(CloudBread.MakeFullUrl(url), JsonUtility.ToJson(postData_), callback_, errorCallback_);
-		}
-
-
-		public class FacebookData
-		{
-			[Serializable]
-			public struct Post
-			{
-				[SerializeField]
-				public string access_token;
-			}
-
-			[Serializable]
-			public struct Receive
-			{
-				[SerializeField]
-				public string authenticationToken;
-
-				[SerializeField]
-				public User user;
-			}
-
-			[Serializable]
-			public struct User
-			{
-				[SerializeField]
-				public string userId;
-			}
-		}
-
 
 
 	}

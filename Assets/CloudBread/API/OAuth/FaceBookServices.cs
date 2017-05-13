@@ -5,11 +5,10 @@ namespace CloudBread.OAuth
 {
 	public class FaceBookServices : BaseOAuth2Services
 	{
-		public override void RequestToken(string access_token, Action<AzureZumoToken.Receive> callback, Action<string> errorCallback = null)
+		public void RequestToken(string access_token, Action<AzureZumoToken.Receive> callback, Action<string> errorCallback = null)
 		{
 			string url = CloudBread.Address + OAuth2Setting.FacebookRedirectAddress;
 			Debug.Log (url);
-
 
 			string postData = "{ \"access_token\" : \"" + access_token + " \"}";
 			Debug.Log (postData);
