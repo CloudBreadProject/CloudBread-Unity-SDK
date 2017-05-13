@@ -88,7 +88,7 @@ namespace CloudBread
 
 
 						if (GUILayout.Button ("Facebook Developer Pages", CBGUIStyleFactory.GetLinkButtonGUIStyle())) {
-							Application.OpenURL ("https://github.com/CloudBreadProject/");
+							Application.OpenURL ("https://github.com/facebook/facebook-sdk-for-unity");
 						}
 
 							
@@ -132,8 +132,8 @@ namespace CloudBread
 					GUILayout.Box ("You can get more information about Google Login Service here.!", CBGUIStyleFactory.GetContentGUIStlye());
 
 
-					if (GUILayout.Button ("Facebook Developer Pages", CBGUIStyleFactory.GetLinkButtonGUIStyle())) {
-						Application.OpenURL ("https://github.com/CloudBreadProject/");
+					if (GUILayout.Button ("Google Game Play Service Pages", CBGUIStyleFactory.GetLinkButtonGUIStyle())) {
+						Application.OpenURL ("https://github.com/playgameservices/play-games-plugin-for-unity");
 					}
 
 
