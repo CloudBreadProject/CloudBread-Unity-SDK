@@ -27,6 +27,7 @@ namespace CloudBread.OAuth
 				}
 
 			case OAuthServices.google:
+				return new GooglePlayServices ();
 				if (OAuth2Setting.UseGooglePlay) {
 					return new GooglePlayServices ();
 				} else {
@@ -38,11 +39,6 @@ namespace CloudBread.OAuth
 				return null;
 			}
 		}
-
-        public OAuthManager()
-        {
-
-        }
 			
     }
 
