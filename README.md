@@ -114,14 +114,23 @@ CloudBread.CBCOMUdtMember.Request(
 - check services you want to uses (Facebook / Google and so on...)
 - fill with Redirect Url
 
-### 2\. Example to use Login services
+### 2\. Example to use Facebook Login services
+
+#### 1) you have to import Facebook-Unity-SDK in your project
+
+* you can download [Facebook-Unity-SDK](https://developers.facebook.com/docs/unity) here
+
+
+#### 2) Example to use Login services
 you can call service like this.
 ```C#
+// make Facebook Login Services
 FaceBookServices oAuthFacebook =  OAuthManager.GetServices (OAuthManager.OAuthServices.facebook) as FaceBookServices;
 oAuthFacebook.RequestToken (accessToken, (BaseOAuth2Services.AzureZumoToken.Receive obj) => {
   Debug.Log(obj.user.userId);
 });
 
+// Request Facebook's user data
 oAuthFacebook.RequestUser (accessToken, (FaceBookServices.FacebookUserData obj) => {
   Debug.Log(obj.name);
 });

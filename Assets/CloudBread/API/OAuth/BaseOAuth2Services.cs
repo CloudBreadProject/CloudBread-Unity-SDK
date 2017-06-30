@@ -6,9 +6,10 @@ namespace CloudBread.OAuth
 	public abstract class BaseOAuth2Services
 	{
 		
-		public abstract void RequestToken(string access_token, Action<AzureZumoToken.Receive> callback, Action<string> errorCallback = null);
+		public BaseOAuth2Services RequestBodyBuilder(){
+			return this;
+		}
 
-//		public abstract void RequestUserData();
 
 		public class AzureZumoToken
 		{

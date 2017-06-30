@@ -36,8 +36,9 @@ namespace CloudBread.OAuth
 			get { return instance._useGooglePlay; }
 			set { Instance._useGooglePlay = value; }
 		}
-
-		public string _googleRedirectAddress = ".auth/login/googleplay";
+			
+//		public string _googleRedirectAddress = ".auth/login/googleplay";
+		public string _googleRedirectAddress = ".auth/login/google";
 		static public string GoogleRedirectAddress 
 		{
 			get { return instance._googleRedirectAddress; }
@@ -47,12 +48,12 @@ namespace CloudBread.OAuth
 
 		// KaKao
 		private bool _useKaKao = false;
-		public bool UseKaKao
+		private bool UseKaKao
 		{
 			get { return Instance._useKaKao; }
 			set { Instance._useKaKao = value; }
 		}
-		public static string KakaoRedirectAddress;
+		private static string KakaoRedirectAddress;
 
 
 
