@@ -24,7 +24,7 @@ If you can see that menu as this photos, that's all!
 ### 1\. PostMan File Import
 
 - CloudBread – CB-PostMan Click
-- [PostMan Collection(2016-03-26버전)](https://raw.githubusercontent.com/wiki/CloudBreadProject/CloudBread/20160326-CloudBread.json.postman_collection) Download
+- [PostMan Collection(2016-03-26 ver.)](https://raw.githubusercontent.com/wiki/CloudBreadProject/CloudBread/20160326-CloudBread.json.postman_collection) Download
 - Import PostMan File (`.json.postman_collection`)
 [Unity CloudBread Postman Editor](https://raw.githubusercontent.com/wiki/CloudBreadProject/CloudBread/Resources/UnitySDK/image003.png))
 
@@ -113,6 +113,8 @@ CloudBread.CBCOMUdtMember.Request(
 ![Facebook oAuth Setting](https://raw.githubusercontent.com/wiki/CloudBreadProject/CloudBread/Resources/UnitySDK/image005.png)
 - check services you want to uses (Facebook / Google and so on...)
 - fill with Redirect Url
+
+* if you want to use CloudBread demo server, see ![here]()
 
 ### 2\. Example to use Facebook Login services
 
