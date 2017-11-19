@@ -14,7 +14,14 @@ oAuth 2.0 Login Service Framework will added (now only Facebook)
 ## How to Install.
 ### 1\. Just Drag Drop in your Project!
 
-**CloudBread-Unity-SDK-master – Asset – CloudBread** 폴더 추가하기 ![Unity CloudBread SDK](https://raw.githubusercontent.com/wiki/CloudBreadProject/CloudBread/Resources/UnitySDK/image001.png)
+**CloudBread-Unity-SDK-master – Asset** 폴더 안의 파일 추가하기 ![Unity CloudBread SDK]
+~~~
+Asset/CloudBread
+    /CloudBread.meta
+    /Editor Default Resources
+    /Editor Default Resources.meta
+~~~
+Asset 안의 2 개의 폴더와 2 개의 meta 파일을 추가하면 됩니다.
 
 ### 2\. Done.
 ![Unity editor](https://raw.githubusercontent.com/wiki/CloudBreadProject/CloudBread/Resources/UnitySDK/image002.png)
